@@ -241,6 +241,72 @@
     display:flex; align-items:center; gap:8px;
   }
   .day-head::after{ content:''; flex:1; height:1px; background:var(--line); }
+
+  /* ---------- PROFILE ---------- */
+  .section-label{
+    font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--coral);
+    margin:24px 0 12px;
+  }
+  .skill-row{ display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+  .skill-name{ font-size:13px; font-weight:700; color:var(--ink-soft); min-width:140px; }
+  .skill-dots{ display:flex; gap:6px; }
+  .skill-dot{
+    width:22px; height:22px; border-radius:50%;
+    border:2px solid var(--line); background:#fff;
+    cursor:pointer; transition:all .15s;
+  }
+  .skill-dot.filled{ background:var(--coral); border-color:var(--coral); }
+  .style-chips{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:6px; }
+  .style-chip{
+    padding:8px 14px; border-radius:8px;
+    border:1.5px solid var(--line); background:#fff;
+    font-size:13px; font-weight:700; color:var(--slate); cursor:pointer;
+  }
+  .style-chip.active{ border-color:var(--ink); background:var(--ink); color:#fff; }
+  .interest-chips{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:6px; }
+  .interest-chip{
+    padding:7px 13px; border-radius:20px;
+    border:1.5px solid var(--line); background:#fff;
+    font-size:13px; font-weight:600; color:var(--slate); cursor:pointer;
+  }
+  .interest-chip.active{ border-color:var(--coral); background:var(--coral-soft); color:var(--coral); }
+
+  /* Profile Cards */
+  .profile-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:600px){ .profile-grid{ grid-template-columns:1fr; } }
+  .profile-card{
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:14px; overflow:hidden;
+    box-shadow:0 2px 10px rgba(22,33,58,0.04);
+  }
+  .profile-card-head{
+    background:var(--ink); color:#fff; padding:16px 18px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .profile-avatar{
+    width:42px; height:42px; border-radius:50%;
+    background:var(--coral); color:#fff; font-size:18px; font-weight:900;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .profile-card-name{ font-size:16px; font-weight:900; }
+  .profile-card-body{ padding:16px 18px; }
+  .pc-section{ margin-bottom:14px; }
+  .pc-section-label{
+    font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--slate); margin-bottom:8px;
+  }
+  .pc-skill-row{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+  .pc-skill-name{ font-size:12px; color:var(--ink-soft); min-width:110px; }
+  .pc-bar-bg{ flex:1; height:6px; background:var(--line); border-radius:3px; }
+  .pc-bar{ height:6px; border-radius:3px; background:var(--coral); }
+  .pc-chips{ display:flex; flex-wrap:wrap; gap:6px; }
+  .pc-chip{ font-size:11px; font-weight:700; padding:3px 9px; border-radius:6px; background:var(--coral-soft); color:var(--coral); }
+  .pc-chip.dark{ background:var(--ink); color:#fff; }
+  .pc-text{ font-size:13px; color:var(--ink-soft); line-height:1.6; }
+  .pc-info-row{ font-size:12px; color:var(--ink-soft); margin-bottom:5px; display:flex; gap:6px; }
+  .pc-info-label{ color:var(--slate); min-width:56px; flex-shrink:0; }
+  .no-profile{ padding:20px 18px; text-align:center; color:var(--slate); font-size:13px; }
 </style>
 </head>
 <body>
@@ -253,6 +319,7 @@
   <div class="tabs">
     <button class="tab-btn active" data-tab="submit">📝 我要回報</button>
     <button class="tab-btn" data-tab="dashboard">📊 管理者檢視</button>
+    <button class="tab-btn" data-tab="profile">👤 實習生檔案</button>
   </div>
 </div>
 
@@ -334,6 +401,139 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- PROFILE FILL VIEW (intern) -->
+<div class="wrap" id="view-profile" style="display:none;">
+  <div class="ticket">
+    <div class="ticket-head">
+      <span class="num">INTERN PROFILE</span>
+      <span class="num">入職自我介紹</span>
+    </div>
+    <div class="ticket-body">
+      <div class="field">
+        <label>姓名</label>
+        <select id="profile-name">
+          <option value="">請選擇</option>
+          <option value="黃稜榕">黃稜榕</option>
+          <option value="左祐寧">左祐寧</option>
+        </select>
+      </div>
+
+      <div class="section-label">— 基本資料 —</div>
+      <div class="row2">
+        <div class="field">
+          <label>生日</label>
+          <input type="date" id="profile-birthday">
+        </div>
+        <div class="field">
+          <label>聯絡電話</label>
+          <input type="text" id="profile-phone" placeholder="09xx-xxx-xxx">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>學校</label>
+          <input type="text" id="profile-school" placeholder="例：嶺東科技大學">
+        </div>
+        <div class="field">
+          <label>科系</label>
+          <input type="text" id="profile-dept" placeholder="例：數位媒體設計系">
+        </div>
+      </div>
+      <div class="field">
+        <label>暑期實習期間居住地址</label>
+        <input type="text" id="profile-address" placeholder="例：台中市南區忠明南路…">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>緊急聯絡人</label>
+          <input type="text" id="profile-ec-name" placeholder="姓名 / 關係，例：王媽媽">
+        </div>
+        <div class="field">
+          <label>緊急聯絡方式</label>
+          <input type="text" id="profile-ec-contact" placeholder="電話或 LINE ID">
+        </div>
+      </div>
+      <div class="field">
+        <label>擅長的工作</label>
+        <textarea id="profile-strength" placeholder="例：手繪插圖、影片剪輯、Excel 資料整理、文案構思…"></textarea>
+      </div>
+
+      <div class="section-label">— 能力盤點 —</div>
+      <p style="font-size:12px;color:var(--slate);margin:0 0 14px;">對自己目前的能力誠實評分，1 顆 = 剛接觸，5 顆 = 很有把握</p>
+      <div id="skills-container">
+        <!-- rendered by JS -->
+      </div>
+
+      <div class="section-label">— 工作風格 —</div>
+      <div class="field">
+        <label>做事偏好</label>
+        <div class="style-chips" data-group="workstyle">
+          <div class="style-chip" data-val="獨立作業">🎧 獨立作業</div>
+          <div class="style-chip" data-val="團隊合作">🤝 團隊合作</div>
+          <div class="style-chip" data-val="兩者都OK">✌️ 兩者都OK</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>溝通偏好</label>
+        <div class="style-chips" data-group="commstyle">
+          <div class="style-chip" data-val="文字為主">💬 文字為主</div>
+          <div class="style-chip" data-val="口頭為主">🗣️ 口頭為主</div>
+          <div class="style-chip" data-val="不拘">🙆 不拘</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>壓力下的反應</label>
+        <div class="style-chips" data-group="pressure">
+          <div class="style-chip" data-val="沉著分析">🧠 沉著分析</div>
+          <div class="style-chip" data-val="快速行動">⚡ 快速行動</div>
+          <div class="style-chip" data-val="視情況">🌀 視情況</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>決策模式</label>
+        <div class="style-chips" data-group="decision">
+          <div class="style-chip" data-val="靠直覺">✨ 靠直覺</div>
+          <div class="style-chip" data-val="靠數據">📊 靠數據</div>
+          <div class="style-chip" data-val="兩者並用">⚖️ 兩者並用</div>
+        </div>
+      </div>
+
+      <div class="section-label">— 目標與期待 —</div>
+      <div class="field">
+        <label>最感興趣的工作類型（可複選）</label>
+        <div class="interest-chips" id="interest-chips">
+          <div class="interest-chip" data-val="系統建置">系統建置</div>
+          <div class="interest-chip" data-val="社群代操">社群代操</div>
+          <div class="interest-chip" data-val="設計">設計</div>
+          <div class="interest-chip" data-val="行銷策略">行銷策略</div>
+          <div class="interest-chip" data-val="教育培訓">教育培訓</div>
+          <div class="interest-chip" data-val="AI 應用">AI 應用</div>
+        </div>
+        <input type="text" id="profile-interest-other" placeholder="其他（自由填寫）" style="margin-top:8px;">
+      </div>
+      <div class="field">
+        <label>這段實習最想學的事</label>
+        <textarea id="profile-learn" placeholder="盡量具體說，例如：想學會獨立跑完一個社群帳號的月計畫…"></textarea>
+      </div>
+      <div class="field">
+        <label>未來方向（畢業後想做什麼？）</label>
+        <textarea id="profile-future" placeholder="不確定也可以說說看現在的想法…"></textarea>
+      </div>
+      <div class="field">
+        <label>想對 Joy 說的話 <span style="font-weight:400;color:var(--slate);">（選填）</span></label>
+        <textarea id="profile-note" placeholder="工作習慣、希望被帶的方式、任何想讓主管知道的事…"></textarea>
+      </div>
+
+      <button class="btn btn-primary" id="submit-profile">儲存我的檔案</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MANAGER VIEW -->
+<div class="wrap wide" id="view-profile-mgr" style="display:none;">
+  <div class="profile-grid" id="profile-cards"></div>
+</div>
+
 <script>
 const $ = (s,el=document)=>el.querySelector(s);
 const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
@@ -359,9 +559,12 @@ $$('.tab-btn').forEach(btn=>{
     $$('.tab-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     const tab = btn.dataset.tab;
-    $('#view-submit').style.display = tab==='submit' ? 'block':'none';
-    $('#view-dashboard').style.display = tab==='dashboard' ? 'block':'none';
+    $('#view-submit').style.display      = tab==='submit'  ? 'block':'none';
+    $('#view-dashboard').style.display   = tab==='dashboard' ? 'block':'none';
+    $('#view-profile').style.display     = tab==='profile' ? 'block':'none';
+    $('#view-profile-mgr').style.display = 'none';
     if(tab==='dashboard') loadDashboard();
+    if(tab==='profile') initProfileForm();
   });
 });
 
@@ -599,6 +802,210 @@ function escapeHtml(str){
 $('#f-reset').addEventListener('click', ()=>{
   $('#f-intern').value=''; $('#f-cat').value=''; $('#f-from').value=''; $('#f-to').value='';
   renderDashboard();
+});
+
+/* ---------- PROFILE ---------- */
+const SKILLS = [
+  '設計（Figma / Canva / PS）',
+  '文案撰寫',
+  '社群操作',
+  '系統思維',
+  '簡報製作',
+  '客戶溝通',
+];
+
+function initProfileForm(){
+  // render skill dots
+  const container = $('#skills-container');
+  container.innerHTML = SKILLS.map((s,i)=>`
+    <div class="skill-row">
+      <span class="skill-name">${s}</span>
+      <div class="skill-dots" data-skill="${i}">
+        ${[1,2,3,4,5].map(n=>`<div class="skill-dot" data-val="${n}"></div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+  // skill dot click
+  $$('.skill-dots').forEach(row=>{
+    $$('.skill-dot', row).forEach(dot=>{
+      dot.addEventListener('click', ()=>{
+        const val = parseInt(dot.dataset.val);
+        $$('.skill-dot', row).forEach((d,idx)=>{
+          d.classList.toggle('filled', idx < val);
+        });
+      });
+    });
+  });
+  // style chips single-select per group
+  $$('[data-group]').forEach(group=>{
+    $$('.style-chip', group).forEach(chip=>{
+      chip.addEventListener('click', ()=>{
+        $$('.style-chip', group).forEach(c=>c.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    });
+  });
+  // interest chips multi-select
+  $$('.interest-chip').forEach(chip=>{
+    chip.addEventListener('click', ()=>chip.classList.toggle('active'));
+  });
+}
+
+function getProfileData(){
+  const skills = {};
+  $$('.skill-dots').forEach((row,i)=>{
+    const filled = $$('.skill-dot.filled', row).length;
+    skills[SKILLS[i]] = filled;
+  });
+  const getStyle = group => {
+    const el = $(`[data-group="${group}"] .style-chip.active`);
+    return el ? el.dataset.val : '';
+  };
+  const interests = $$('.interest-chip.active').map(c=>c.dataset.val);
+  const interestOther = $('#profile-interest-other').value.trim();
+  return {
+    name: $('#profile-name').value,
+    birthday: $('#profile-birthday').value,
+    phone: $('#profile-phone').value.trim(),
+    school: $('#profile-school').value.trim(),
+    dept: $('#profile-dept').value.trim(),
+    address: $('#profile-address').value.trim(),
+    ecName: $('#profile-ec-name').value.trim(),
+    ecContact: $('#profile-ec-contact').value.trim(),
+    strength: $('#profile-strength').value.trim(),
+    skills,
+    workstyle: getStyle('workstyle'),
+    commstyle: getStyle('commstyle'),
+    pressure: getStyle('pressure'),
+    decision: getStyle('decision'),
+    interests,
+    interestOther,
+    learn: $('#profile-learn').value.trim(),
+    future: $('#profile-future').value.trim(),
+    note: $('#profile-note').value.trim(),
+    savedAt: new Date().toISOString(),
+  };
+}
+
+async function submitProfile(){
+  const data = getProfileData();
+  if(!data.name){ showToast('⚠️ 請先選擇姓名'); return; }
+  const btn = $('#submit-profile');
+  btn.disabled = true; btn.textContent = '儲存中...';
+  try{
+    await window.storage.set(`profile:${data.name}`, JSON.stringify(data), true);
+    showToast('✅ 檔案已儲存！');
+  }catch(e){ showToast('❌ 儲存失敗，請再試一次'); }
+  btn.disabled = false; btn.textContent = '儲存我的檔案';
+}
+$('#submit-profile').addEventListener('click', submitProfile);
+
+/* Manager: load & render profile cards */
+async function loadProfileCards(){
+  const names = ['黃稜榕','左祐寧'];
+  const cards = [];
+  for(const n of names){
+    try{
+      const r = await window.storage.get(`profile:${n}`, true);
+      cards.push(r && r.value ? JSON.parse(r.value) : null);
+    }catch(e){ cards.push(null); }
+  }
+  const container = $('#profile-cards');
+  container.innerHTML = names.map((n,i)=>{
+    const d = cards[i];
+    const initial = n[0];
+    if(!d) return `
+      <div class="profile-card">
+        <div class="profile-card-head">
+          <div class="profile-avatar">${initial}</div>
+          <div class="profile-card-name">${n}</div>
+        </div>
+        <div class="no-profile">尚未填寫實習生檔案</div>
+      </div>`;
+    const skillsHtml = Object.entries(d.skills||{}).map(([k,v])=>`
+      <div class="pc-skill-row">
+        <span class="pc-skill-name">${k.split('（')[0]}</span>
+        <div class="pc-bar-bg"><div class="pc-bar" style="width:${v*20}%"></div></div>
+        <span style="font-size:11px;color:var(--slate);font-family:'JetBrains Mono',monospace;">${v}/5</span>
+      </div>`).join('');
+    const styleItems = [
+      d.workstyle && `<span class="pc-chip dark">${d.workstyle}</span>`,
+      d.commstyle && `<span class="pc-chip dark">${d.commstyle}</span>`,
+      d.pressure && `<span class="pc-chip dark">${d.pressure}</span>`,
+      d.decision && `<span class="pc-chip dark">${d.decision}</span>`,
+    ].filter(Boolean).join('');
+    const allInterests = [...(d.interests||[]), ...(d.interestOther ? [d.interestOther] : [])];
+    const interestHtml = allInterests.map(v=>`<span class="pc-chip">${v}</span>`).join('');
+    // basic info rows
+    const infoRows = [
+      d.birthday && `<div class="pc-info-row"><span class="pc-info-label">生日</span>${d.birthday}</div>`,
+      d.phone && `<div class="pc-info-row"><span class="pc-info-label">電話</span>${escapeHtml(d.phone)}</div>`,
+      (d.school||d.dept) && `<div class="pc-info-row"><span class="pc-info-label">學校科系</span>${escapeHtml([d.school,d.dept].filter(Boolean).join(' · '))}</div>`,
+      d.address && `<div class="pc-info-row"><span class="pc-info-label">暑期住址</span>${escapeHtml(d.address)}</div>`,
+      (d.ecName||d.ecContact) && `<div class="pc-info-row"><span class="pc-info-label">緊急聯絡</span>${escapeHtml([d.ecName,d.ecContact].filter(Boolean).join('　'))}</div>`,
+    ].filter(Boolean).join('');
+    return `
+      <div class="profile-card">
+        <div class="profile-card-head">
+          <div class="profile-avatar">${initial}</div>
+          <div>
+            <div class="profile-card-name">${n}</div>
+            <div style="font-size:11px;opacity:.6;margin-top:2px;">更新於 ${(d.savedAt||'').slice(0,10)}</div>
+          </div>
+        </div>
+        <div class="profile-card-body">
+          ${infoRows ? `<div class="pc-section">
+            <div class="pc-section-label">基本資料</div>
+            ${infoRows}
+          </div>` : ''}
+          ${d.strength ? `<div class="pc-section">
+            <div class="pc-section-label">擅長的工作</div>
+            <div class="pc-text">${escapeHtml(d.strength)}</div>
+          </div>` : ''}
+          <div class="pc-section">
+            <div class="pc-section-label">能力盤點</div>
+            ${skillsHtml}
+          </div>
+          ${styleItems ? `<div class="pc-section">
+            <div class="pc-section-label">工作風格</div>
+            <div class="pc-chips">${styleItems}</div>
+          </div>` : ''}
+          ${interestHtml ? `<div class="pc-section">
+            <div class="pc-section-label">感興趣的方向</div>
+            <div class="pc-chips">${interestHtml}</div>
+          </div>` : ''}
+          ${d.learn ? `<div class="pc-section">
+            <div class="pc-section-label">最想學的事</div>
+            <div class="pc-text">${escapeHtml(d.learn)}</div>
+          </div>` : ''}
+          ${d.future ? `<div class="pc-section">
+            <div class="pc-section-label">未來方向</div>
+            <div class="pc-text">${escapeHtml(d.future)}</div>
+          </div>` : ''}
+          ${d.note ? `<div class="pc-section">
+            <div class="pc-section-label">給 Joy 的話</div>
+            <div class="pc-text">${escapeHtml(d.note)}</div>
+          </div>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// 管理者在 dashboard tab 時，側邊加個入口讓她也能看 profile
+// 判斷：profile tab 切換後，若是 Joy 視角就顯示管理卡；否則顯示填寫表單
+// 簡單做法：兩個子模式共用同一 tab，name 選擇後才顯示表單；管理者點「查看所有檔案」
+document.addEventListener('DOMContentLoaded', ()=>{
+  // 在 dashboard view 底部加 profile 快速入口
+  const dash = $('#view-dashboard');
+  const shortcut = document.createElement('div');
+  shortcut.style = 'text-align:center;margin-top:24px;';
+  shortcut.innerHTML = `<button class="btn btn-ghost" id="goto-profiles" style="margin:auto;">👤 查看實習生檔案</button>`;
+  dash.appendChild(shortcut);
+  $('#goto-profiles').addEventListener('click', ()=>{
+    $('#view-dashboard').style.display = 'none';
+    $('#view-profile-mgr').style.display = 'block';
+    loadProfileCards();
+  });
 });
 </script>
 </body>
