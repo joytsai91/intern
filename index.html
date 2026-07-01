@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成緯數位｜實習日誌</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root{
+    --ink:#16213A;
+    --ink-soft:#2B3A5E;
+    --coral:#FF5A3C;
+    --coral-soft:#FFE4DB;
+    --cream:#FAF7F2;
+    --paper:#FFFFFF;
+    --slate:#6B7280;
+    --line:#E4DFD6;
+    --ok:#2F9E68;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Noto Sans TC', -apple-system, 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+  }
+  .topbar{
+    background:var(--ink);
+    color:#fff;
+    padding:18px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .brand{
+    display:flex;
+    flex-direction:column;
+    line-height:1.2;
+  }
+  .brand .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    color:var(--coral);
+    text-transform:uppercase;
+  }
+  .brand .title{
+    font-size:20px;
+    font-weight:900;
+  }
+  .tabs{
+    display:flex;
+    gap:6px;
+    background:rgba(255,255,255,0.08);
+    padding:4px;
+    border-radius:10px;
+  }
+  .tab-btn{
+    border:none;
+    background:transparent;
+    color:rgba(255,255,255,0.7);
+    padding:8px 16px;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:500;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .tab-btn.active{
+    background:var(--coral);
+    color:#fff;
+  }
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding:28px 18px 80px;
+  }
+  .wrap.wide{ max-width:980px; }
+
+  /* ticket-style card */
+  .ticket{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 2px 10px rgba(22,33,58,0.04);
+  }
+  .ticket + .ticket{ margin-top:16px; }
+  .ticket-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 18px;
+    border-bottom:1px dashed var(--line);
+    background:var(--cream);
+  }
+  .ticket-head .num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--slate);
+    letter-spacing:0.05em;
+  }
+  .ticket-body{ padding:18px; }
+
+  label{
+    display:block;
+    font-size:13px;
+    font-weight:700;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  .field{ margin-bottom:16px; }
+  input[type=text], input[type=number], input[type=date], select, textarea{
+    width:100%;
+    padding:10px 12px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    font-size:14px;
+    font-family:inherit;
+    background:#fff;
+    color:var(--ink);
+  }
+  input:focus, select:focus, textarea:focus{
+    outline:none;
+    border-color:var(--coral);
+  }
+  textarea{ min-height:70px; resize:vertical; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .row3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  @media(max-width:560px){ .row2,.row3{ grid-template-columns:1fr; } }
+
+  .cat-select{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+  .cat-pill{
+    flex:1;
+    min-width:110px;
+    text-align:center;
+    padding:10px 8px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:700;
+    color:var(--slate);
+    background:#fff;
+  }
+  .cat-pill.active{
+    border-color:var(--coral);
+    background:var(--coral-soft);
+    color:var(--coral);
+  }
+
+  .item-card{
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px;
+    margin-bottom:12px;
+    background:var(--cream);
+    position:relative;
+  }
+  .item-card .rm{
+    position:absolute;
+    top:10px;
+    right:10px;
+    border:none;
+    background:none;
+    color:var(--slate);
+    cursor:pointer;
+    font-size:18px;
+    line-height:1;
+  }
+  .item-card .rm:hover{ color:var(--coral); }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:none;
+    border-radius:9px;
+    padding:11px 18px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .btn-primary{ background:var(--coral); color:#fff; width:100%; justify-content:center; padding:14px; font-size:15px; }
+  .btn-primary:hover{ background:#E64A2E; }
+  .btn-ghost{ background:#fff; color:var(--ink-soft); border:1.5px solid var(--line); }
+  .btn-ghost:hover{ border-color:var(--ink-soft); }
+  .btn-dashed{ background:transparent; color:var(--coral); border:1.5px dashed var(--coral); width:100%; justify-content:center; }
+
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--ink); color:#fff; padding:12px 22px; border-radius:10px;
+    font-size:14px; opacity:0; transition:all .25s ease; pointer-events:none;
+    display:flex; align-items:center; gap:8px;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* dashboard */
+  .filter-bar{
+    display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; align-items:end;
+  }
+  .filter-bar .field{ margin-bottom:0; min-width:140px; flex:1; }
+  .stat-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
+  @media(max-width:560px){ .stat-grid{ grid-template-columns:1fr; } }
+  .stat{
+    background:var(--ink); color:#fff; border-radius:12px; padding:16px 18px;
+  }
+  .stat .v{ font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:700; color:var(--coral); }
+  .stat .l{ font-size:12px; color:rgba(255,255,255,0.65); margin-top:2px; }
+
+  .log-entry{
+    display:flex; gap:14px; padding:14px 0; border-bottom:1px solid var(--line);
+  }
+  .log-entry:last-child{ border-bottom:none; }
+  .log-tag{
+    font-size:11px; font-weight:700; padding:3px 9px; border-radius:6px; white-space:nowrap; height:fit-content;
+  }
+  .tag-sys{ background:#E8EEFB; color:#2952CC; }
+  .tag-research{ background:#EDE9FB; color:#6B3FC5; }
+  .tag-design{ background:#E2F5ED; color:#1A7A4A; }
+  .tag-course{ background:#FFF3DC; color:#B56E00; }
+  .log-meta{ font-size:12px; color:var(--slate); margin-bottom:4px; }
+  .log-title{ font-size:14px; font-weight:700; margin-bottom:3px; }
+  .log-desc{ font-size:13px; color:var(--ink-soft); line-height:1.5; white-space:pre-wrap; }
+  .log-stats{ font-size:12px; color:var(--slate); margin-top:6px; font-family:'JetBrains Mono',monospace; }
+
+  .empty{
+    text-align:center; padding:50px 20px; color:var(--slate);
+  }
+  .empty .big{ font-size:34px; margin-bottom:8px; }
+
+  .day-group + .day-group{ margin-top:24px; }
+  .day-head{
+    font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600;
+    color:var(--ink-soft); margin-bottom:8px; letter-spacing:.04em;
+    display:flex; align-items:center; gap:8px;
+  }
+  .day-head::after{ content:''; flex:1; height:1px; background:var(--line); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="eyebrow">Chengwei Digital · Intern Log</span>
+    <span class="title">成緯數位｜實習日誌</span>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="submit">📝 我要回報</button>
+    <button class="tab-btn" data-tab="dashboard">📊 管理者檢視</button>
+  </div>
+</div>
+
+<!-- SUBMIT VIEW -->
+<div class="wrap" id="view-submit">
+  <div class="ticket">
+    <div class="ticket-head">
+      <span class="num">DAILY REPORT</span>
+      <span class="num" id="ticket-date-label"></span>
+    </div>
+    <div class="ticket-body">
+      <div class="row2">
+        <div class="field">
+          <label>姓名</label>
+          <select id="intern-name">
+            <option value="">請選擇</option>
+            <option value="黃稜榕">黃稜榕</option>
+            <option value="左祐寧">左祐寧</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>回報日期</label>
+          <input type="date" id="report-date">
+        </div>
+      </div>
+
+      <div id="items-container"></div>
+
+      <button class="btn btn-dashed" id="add-item">＋ 新增一項工作紀錄</button>
+
+      <div style="margin-top:20px;">
+        <button class="btn btn-primary" id="submit-report">送出今日回報</button>
+      </div>
+    </div>
+  </div>
+  <p style="text-align:center;color:var(--slate);font-size:12px;margin-top:14px;">
+    送出後管理者即可在「管理者檢視」看到所有實習生的回報內容。
+  </p>
+</div>
+
+<!-- DASHBOARD VIEW -->
+<div class="wrap wide" id="view-dashboard" style="display:none;">
+  <div class="filter-bar">
+    <div class="field">
+      <label>實習生</label>
+      <select id="f-intern"><option value="">全部</option></select>
+    </div>
+    <div class="field">
+      <label>類別</label>
+      <select id="f-cat">
+        <option value="">全部</option>
+        <option value="test">系統測試</option>
+        <option value="research">需求調研</option>
+        <option value="design">設計</option>
+        <option value="course">線上課程</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>起始日期</label>
+      <input type="date" id="f-from">
+    </div>
+    <div class="field">
+      <label>結束日期</label>
+      <input type="date" id="f-to">
+    </div>
+    <div class="field" style="flex:0;">
+      <button class="btn btn-ghost" id="f-reset">清除篩選</button>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="v" id="stat-hours">0</div><div class="l">總投入時數</div></div>
+    <div class="stat"><div class="v" id="stat-entries">0</div><div class="l">回報筆數</div></div>
+    <div class="stat"><div class="v" id="stat-interns">0</div><div class="l">回報人數</div></div>
+  </div>
+
+  <div id="log-list"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = (s,el=document)=>el.querySelector(s);
+const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
+
+const CAT_LABEL = { test:'系統測試', research:'需求調研', design:'設計', course:'線上課程' };
+const CAT_TAGCLASS = { test:'tag-sys', research:'tag-research', design:'tag-design', course:'tag-course' };
+
+function todayStr(){
+  const d = new Date();
+  const tz = d.getTimezoneOffset()*60000;
+  return new Date(d-tz).toISOString().slice(0,10);
+}
+function showToast(msg){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+/* ---------- TAB SWITCHING ---------- */
+$$('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    $$('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    $('#view-submit').style.display = tab==='submit' ? 'block':'none';
+    $('#view-dashboard').style.display = tab==='dashboard' ? 'block':'none';
+    if(tab==='dashboard') loadDashboard();
+  });
+});
+
+/* ---------- SUBMIT FORM ---------- */
+$('#report-date').value = todayStr();
+function updateTicketLabel(){
+  $('#ticket-date-label').textContent = $('#report-date').value || todayStr();
+}
+$('#report-date').addEventListener('change', updateTicketLabel);
+updateTicketLabel();
+
+let itemCount = 0;
+function addItem(){
+  itemCount++;
+  const id = 'item-'+itemCount+'-'+Date.now();
+  const wrap = document.createElement('div');
+  wrap.className = 'item-card';
+  wrap.dataset.id = id;
+  wrap.innerHTML = `
+    <button type="button" class="rm" title="刪除">×</button>
+    <div class="cat-select">
+      <div class="cat-pill active" data-cat="test">系統測試</div>
+      <div class="cat-pill" data-cat="research">需求調研</div>
+      <div class="cat-pill" data-cat="design">設計</div>
+      <div class="cat-pill" data-cat="course">線上課程</div>
+    </div>
+    <div class="cat-fields" data-cat-fields="test">
+      <div class="field"><label class="f-project-label">專案名稱</label><input type="text" class="f-project" placeholder="輸入專案名稱"></div>
+      <div class="field"><label>今日工作內容</label><textarea class="f-desc" placeholder="今天完成了什麼？"></textarea></div>
+      <div class="field"><label>投入時數</label><input type="number" class="f-hours" min="0" step="0.5" placeholder="例：3"></div>
+      <div class="field"><label>遇到的問題 / 待確認事項</label><textarea class="f-issue" placeholder="卡住的地方、需要協助的地方"></textarea></div>
+    </div>
+  `;
+  $('#items-container').appendChild(wrap);
+
+  // category switch logic
+  $$('.cat-pill', wrap).forEach(pill=>{
+    pill.addEventListener('click', ()=>{
+      $$('.cat-pill', wrap).forEach(p=>p.classList.remove('active'));
+      pill.classList.add('active');
+      renderCatFields(wrap, pill.dataset.cat);
+    });
+  });
+  $('.rm', wrap).addEventListener('click', ()=>wrap.remove());
+}
+
+const PROJECT_LABEL = { test:'專案名稱', research:'客戶名稱', design:'客戶名稱', course:'課程名稱' };
+const PROJECT_PLACEHOLDER = { test:'輸入專案名稱', research:'輸入客戶名稱', design:'輸入客戶名稱', course:'輸入課程名稱' };
+
+function renderCatFields(wrap, cat){
+  const box = $('.cat-fields', wrap);
+  box.dataset.catFields = cat;
+  box.innerHTML = `
+    <div class="field"><label class="f-project-label">${PROJECT_LABEL[cat]}</label><input type="text" class="f-project" placeholder="${PROJECT_PLACEHOLDER[cat]}"></div>
+    <div class="field"><label>今日工作內容</label><textarea class="f-desc" placeholder="今天完成了什麼？"></textarea></div>
+    <div class="field"><label>投入時數</label><input type="number" class="f-hours" min="0" step="0.5" placeholder="例：3"></div>
+    <div class="field"><label>遇到的問題 / 待確認事項</label><textarea class="f-issue" placeholder="卡住的地方、需要協助的地方"></textarea></div>
+  `;
+}
+
+$('#add-item').addEventListener('click', addItem);
+addItem(); // start with one
+
+async function submitReport(){
+  const name = $('#intern-name').value;
+  const date = $('#report-date').value || todayStr();
+  if(!name){ showToast('⚠️ 請先選擇姓名'); return; }
+
+  const cards = $$('.item-card');
+  if(cards.length === 0){ showToast('⚠️ 請至少新增一項工作紀錄'); return; }
+
+  const items = cards.map(card=>{
+    const cat = $('.cat-pill.active', card).dataset.cat;
+    const get = sel => { const el = $(sel, card); return el ? el.value.trim() : ''; };
+    return {
+      cat,
+      project: get('.f-project'),
+      desc: get('.f-desc'),
+      hours: parseFloat(get('.f-hours')) || 0,
+      issue: get('.f-issue'),
+    };
+  });
+
+  const entry = {
+    intern: name,
+    date,
+    submittedAt: new Date().toISOString(),
+    items
+  };
+
+  const key = `report:${date}:${name}:${Date.now()}`;
+  try{
+    const btn = $('#submit-report');
+    btn.disabled = true;
+    btn.textContent = '送出中...';
+    const res = await window.storage.set(key, JSON.stringify(entry), true);
+    if(!res) throw new Error('storage failed');
+    showToast('✅ 回報已送出，辛苦了！');
+    // reset form
+    $('#items-container').innerHTML = '';
+    itemCount = 0;
+    addItem();
+    btn.disabled = false;
+    btn.textContent = '送出今日回報';
+  }catch(err){
+    console.error(err);
+    showToast('❌ 送出失敗，請再試一次');
+    const btn = $('#submit-report');
+    btn.disabled = false;
+    btn.textContent = '送出今日回報';
+  }
+}
+$('#submit-report').addEventListener('click', submitReport);
+
+/* ---------- DASHBOARD ---------- */
+let allReports = [];
+
+async function loadDashboard(){
+  $('#log-list').innerHTML = `<div class="empty">載入中...</div>`;
+  try{
+    const list = await window.storage.list('report:', true);
+    const keys = (list && list.keys) ? list.keys : [];
+    const reports = [];
+    for(const k of keys){
+      try{
+        const r = await window.storage.get(k, true);
+        if(r && r.value) reports.push(JSON.parse(r.value));
+      }catch(e){ /* skip unreadable key */ }
+    }
+    allReports = reports.sort((a,b)=> b.date.localeCompare(a.date) || b.submittedAt.localeCompare(a.submittedAt));
+    populateInternFilter();
+    renderDashboard();
+  }catch(err){
+    console.error(err);
+    $('#log-list').innerHTML = `<div class="empty"><div class="big">⚠️</div>讀取資料失敗，請重新整理再試一次</div>`;
+  }
+}
+
+function populateInternFilter(){
+  const sel = $('#f-intern');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">全部</option><option value="黃稜榕">黃稜榕</option><option value="左祐寧">左祐寧</option>';
+  sel.value = current;
+}
+
+function applyFilters(){
+  const intern = $('#f-intern').value;
+  const cat = $('#f-cat').value;
+  const from = $('#f-from').value;
+  const to = $('#f-to').value;
+
+  return allReports
+    .map(r=>{
+      let items = r.items;
+      if(cat) items = items.filter(it=>it.cat===cat);
+      return {...r, items};
+    })
+    .filter(r=>{
+      if(intern && r.intern !== intern) return false;
+      if(from && r.date < from) return false;
+      if(to && r.date > to) return false;
+      if(cat && r.items.length===0) return false;
+      return true;
+    });
+}
+
+function renderDashboard(){
+  const filtered = applyFilters();
+
+  // stats
+  let totalHours = 0, totalEntries = 0;
+  const internSet = new Set();
+  filtered.forEach(r=>{
+    internSet.add(r.intern);
+    r.items.forEach(it=>{ totalHours += (it.hours||0); totalEntries++; });
+  });
+  $('#stat-hours').textContent = totalHours.toFixed(1);
+  $('#stat-entries').textContent = totalEntries;
+  $('#stat-interns').textContent = internSet.size;
+
+  const list = $('#log-list');
+  if(filtered.length===0){
+    list.innerHTML = `<div class="empty"><div class="big">🗂️</div>目前還沒有符合條件的回報紀錄</div>`;
+    return;
+  }
+
+  // group by date
+  const byDate = {};
+  filtered.forEach(r=>{
+    if(r.items.length===0) return;
+    byDate[r.date] = byDate[r.date] || [];
+    byDate[r.date].push(r);
+  });
+
+  const dates = Object.keys(byDate).sort().reverse();
+  list.innerHTML = dates.map(date=>{
+    const reportsForDate = byDate[date];
+    const entriesHtml = reportsForDate.map(r=>{
+      return r.items.map(it=>{
+        const tagClass = CAT_TAGCLASS[it.cat];
+        const tagLabel = CAT_LABEL[it.cat];
+        let statsLine = `投入 ${it.hours||0} 小時`;
+        return `
+          <div class="log-entry">
+            <span class="log-tag ${tagClass}">${tagLabel}</span>
+            <div style="flex:1;">
+              <div class="log-meta">${r.intern}</div>
+              ${it.project ? `<div class="log-title">${escapeHtml(it.project)}</div>` : ''}
+              ${it.desc ? `<div class="log-desc">${escapeHtml(it.desc)}</div>` : ''}
+              ${it.issue ? `<div class="log-desc" style="color:var(--coral);margin-top:4px;">⚠ ${escapeHtml(it.issue)}</div>` : ''}
+              <div class="log-stats">${statsLine}</div>
+            </div>
+          </div>`;
+      }).join('');
+    }).join('');
+
+    return `
+      <div class="day-group">
+        <div class="day-head">${date}</div>
+        <div class="ticket"><div class="ticket-body">${entriesHtml}</div></div>
+      </div>`;
+  }).join('');
+}
+
+function escapeHtml(str){
+  if(!str) return '';
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+['f-intern','f-cat','f-from','f-to'].forEach(id=>{
+  $('#'+id).addEventListener('change', renderDashboard);
+});
+$('#f-reset').addEventListener('click', ()=>{
+  $('#f-intern').value=''; $('#f-cat').value=''; $('#f-from').value=''; $('#f-to').value='';
+  renderDashboard();
+});
+</script>
+</body>
+</html>
