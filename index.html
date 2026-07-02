@@ -539,9 +539,21 @@ const $ = (s,el=document)=>el.querySelector(s);
 const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
 
 const FB = 'https://intern-cb6a0-default-rtdb.asia-southeast1.firebasedatabase.app';
-async function fbGet(path){ const r=await fetch(`${FB}/${path}.json`); if(!r.ok) throw new Error('read fail'); return r.json(); }
-async function fbSet(path,data){ const r=await fetch(`${FB}/${path}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}); if(!r.ok) throw new Error('write fail'); return r.json(); }
-async function fbPush(path,data){ const r=await fetch(`${FB}/${path}.json`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}); if(!r.ok) throw new Error('push fail'); return r.json(); }
+async function fbGet(path){
+  const r = await fetch(`${FB}/${path}.json`);
+  if(!r.ok) throw new Error(`Firebase read ${r.status}`);
+  return r.json();
+}
+async function fbSet(path, data){
+  const r = await fetch(`${FB}/${path}.json`, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)});
+  if(!r.ok){ const t=await r.text(); throw new Error(`Firebase write ${r.status}: ${t}`); }
+  return r.json();
+}
+async function fbPush(path, data){
+  const r = await fetch(`${FB}/${path}.json`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)});
+  if(!r.ok){ const t=await r.text(); throw new Error(`Firebase push ${r.status}: ${t}`); }
+  return r.json();
+}
 
 const CAT_LABEL = { test:'系統測試', research:'需求調研', design:'設計', course:'線上課程' };
 const CAT_TAGCLASS = { test:'tag-sys', research:'tag-research', design:'tag-design', course:'tag-course' };
@@ -675,7 +687,7 @@ async function submitReport(){
     btn.textContent = '送出今日回報';
   }catch(err){
     console.error(err);
-    showToast('❌ 送出失敗，請再試一次');
+    showToast('❌ ' + (err.message || '送出失敗，請再試一次'));
     const btn = $('#submit-report');
     btn.disabled = false;
     btn.textContent = '送出今日回報';
@@ -892,7 +904,7 @@ async function submitProfile(){
   try{
     await fbSet(`profiles/${encodeURIComponent(data.name)}`, data);
     showToast('✅ 檔案已儲存！');
-  }catch(e){ showToast('❌ 儲存失敗，請再試一次'); }
+  }catch(e){ showToast('❌ ' + (e.message || '儲存失敗，請再試一次')); }
   btn.disabled = false; btn.textContent = '儲存我的檔案';
 }
 $('#submit-profile').addEventListener('click', submitProfile);
