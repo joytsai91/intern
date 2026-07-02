@@ -861,11 +861,10 @@ function initProfileForm(){
 }
 
 function getProfileData(){
-  const skills = {};
-  $$('.skill-dots').forEach((row,i)=>{
-    const filled = $$('.skill-dot.filled', row).length;
-    skills[SKILLS[i]] = filled;
-  });
+  const skills = SKILLS.map((name, i) => ({
+    name,
+    value: $$('.skill-dot.filled', $$('.skill-dots')[i]).length
+  }));
   const getStyle = group => {
     const el = $(`[data-group="${group}"] .style-chip.active`);
     return el ? el.dataset.val : '';
@@ -931,11 +930,11 @@ async function loadProfileCards(){
         </div>
         <div class="no-profile">尚未填寫實習生檔案</div>
       </div>`;
-    const skillsHtml = Object.entries(d.skills||{}).map(([k,v])=>`
+    const skillsHtml = (Array.isArray(d.skills) ? d.skills : Object.entries(d.skills||{}).map(([name,value])=>({name,value}))).map(s=>`
       <div class="pc-skill-row">
-        <span class="pc-skill-name">${k.split('（')[0]}</span>
-        <div class="pc-bar-bg"><div class="pc-bar" style="width:${v*20}%"></div></div>
-        <span style="font-size:11px;color:var(--slate);font-family:'JetBrains Mono',monospace;">${v}/5</span>
+        <span class="pc-skill-name">${s.name.split('（')[0]}</span>
+        <div class="pc-bar-bg"><div class="pc-bar" style="width:${s.value*20}%"></div></div>
+        <span style="font-size:11px;color:var(--slate);font-family:'JetBrains Mono',monospace;">${s.value}/5</span>
       </div>`).join('');
     const styleItems = [
       d.workstyle && `<span class="pc-chip dark">${d.workstyle}</span>`,
