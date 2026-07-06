@@ -228,6 +228,12 @@
   .log-title{ font-size:14px; font-weight:700; margin-bottom:3px; }
   .log-desc{ font-size:13px; color:var(--ink-soft); line-height:1.5; white-space:pre-wrap; }
   .log-stats{ font-size:12px; color:var(--slate); margin-top:6px; font-family:'JetBrains Mono',monospace; }
+  .del-btn{
+    border:none; background:none; color:var(--line);
+    font-size:16px; cursor:pointer; padding:4px; flex-shrink:0;
+    align-self:flex-start; border-radius:6px;
+  }
+  .del-btn:hover{ color:var(--coral); background:var(--coral-soft); }
 
   .empty{
     text-align:center; padding:50px 20px; color:var(--slate);
@@ -554,6 +560,11 @@ async function fbPush(path, data){
   if(!r.ok){ const t=await r.text(); throw new Error(`Firebase push ${r.status}: ${t}`); }
   return r.json();
 }
+async function fbDelete(path){
+  const r = await fetch(`${FB}/${path}.json`, {method:'DELETE'});
+  if(!r.ok){ const t=await r.text(); throw new Error(`Firebase delete ${r.status}: ${t}`); }
+  return r.json();
+}
 
 const CAT_LABEL = { test:'系統測試', research:'需求調研', design:'設計', course:'線上課程' };
 const CAT_TAGCLASS = { test:'tag-sys', research:'tag-research', design:'tag-design', course:'tag-course' };
@@ -705,7 +716,9 @@ async function loadDashboard(){
   $('#log-list').innerHTML = `<div class="empty">載入中...</div>`;
   try{
     const data = await fbGet('reports');
-    const reports = data ? Object.values(data) : [];
+    const reports = data
+      ? Object.entries(data).map(([fbKey, v]) => ({...v, _fbKey: fbKey}))
+      : [];
     allReports = reports.sort((a,b)=> b.date.localeCompare(a.date) || b.submittedAt.localeCompare(a.submittedAt));
     populateInternFilter();
     renderDashboard();
@@ -780,7 +793,7 @@ function renderDashboard(){
         const tagLabel = CAT_LABEL[it.cat];
         let statsLine = `投入 ${it.hours||0} 小時`;
         return `
-          <div class="log-entry">
+          <div class="log-entry" data-fbkey="${r._fbKey}">
             <span class="log-tag ${tagClass}">${tagLabel}</span>
             <div style="flex:1;">
               <div class="log-meta">${r.intern}</div>
@@ -789,6 +802,7 @@ function renderDashboard(){
               ${it.issue ? `<div class="log-desc" style="color:var(--coral);margin-top:4px;">⚠ ${escapeHtml(it.issue)}</div>` : ''}
               <div class="log-stats">${statsLine}</div>
             </div>
+            <button class="del-btn" title="刪除這筆回報" onclick="deleteReport('${r._fbKey}', this)">🗑</button>
           </div>`;
       }).join('');
     }).join('');
@@ -806,6 +820,23 @@ function escapeHtml(str){
   const d = document.createElement('div');
   d.textContent = str;
   return d.innerHTML;
+}
+
+async function deleteReport(fbKey, btn){
+  if(!confirm('確定刪除這筆回報？')) return;
+  try{
+    btn.textContent = '…';
+    await fbDelete(`reports/${fbKey}`);
+    const entry = btn.closest('.log-entry');
+    entry.style.opacity = '0';
+    entry.style.transition = 'opacity .3s';
+    setTimeout(()=>{ entry.remove(); showToast('🗑 已刪除'); }, 300);
+    allReports = allReports.filter(r => r._fbKey !== fbKey);
+    renderDashboard();
+  }catch(e){
+    showToast('❌ 刪除失敗：' + e.message);
+    btn.textContent = '🗑';
+  }
 }
 
 ['f-intern','f-cat','f-from','f-to'].forEach(id=>{
